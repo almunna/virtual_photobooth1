@@ -1,0 +1,157 @@
+/* HomePage.css */
+
+body {
+    margin: 0;
+    background: linear-gradient(to bottom, #d8f3fa, #00a4cc); /* Background gradient */
+    font-family: Arial, sans-serif;
+    overflow-y: scroll; /* Force scrollbar to be visible at all times */
+}
+
+.home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #e0f7fa;
+    border-radius: 40px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color: #004481;
+    margin: 20px auto; /* Center the container horizontally */
+    max-height: 100%;
+}
+
+/* Logo Styles */
+.logo {
+    width: 80px; 
+    height: auto;
+}
+
+.logo1 {
+    width: 30%; /* Set the width to a smaller value */
+    max-width: 80%; /* Prevent it from exceeding the container's width */
+    height: 30%; /* Maintain the aspect ratio */
+    margin-bottom: 20px;
+}
+
+/* Title and Text */
+.title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #004481;
+    margin-top: 20px;
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: #0078aa;
+    margin-bottom: 10px;
+}
+
+.description {
+    font-size: 1rem;
+    color: #004481;
+    margin-bottom: 30px;
+}
+
+/* Start Button */
+.start-button {
+    font-size: 1rem;
+    padding: 10px 20px;
+    background-color: #004481;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.start-button:hover {
+    background-color: #0078aa;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .home-container {
+        max-width: 90%;
+        padding: 20px;
+    }
+    
+    .logo {
+        width: 70px;
+    }
+    
+    .logo1 {
+        width: 90px; /* Adjusted size for Logo 1 */
+    }
+    
+    .title {
+        font-size: 1.3rem;
+    }
+
+    .subtitle,
+    .description {
+        font-size: 0.9rem;
+    }
+
+    .start-button {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-container {
+        width: 95%;
+        max-width: 100%;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .logo {
+        width: 60px;
+    }
+
+    .logo1 {
+        width: 80px; /* Further reduced size for smaller screens */
+        height: auto;
+    }
+
+    .title {
+        font-size: 1.2rem;
+    }
+
+    .subtitle,
+    .description {
+        font-size: 0.85rem;
+    }
+
+    .start-button {
+        font-size: 0.85rem;
+        padding: 6px 14px;
+    }
+}
+
+/* Additional media query for very small devices or portrait orientation */
+@media (max-width: 320px) {
+    .home-container {
+        padding: 10px; /* Further reduce padding for very small devices */
+    }
+
+    .title {
+        font-size: 1.1rem;
+    }
+
+    .subtitle,
+    .description {
+        font-size: 0.75rem;
+    }
+
+    .start-button {
+        font-size: 0.8rem;
+        padding: 5px 12px; /* Adjust button size */
+    }
+}
