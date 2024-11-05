@@ -11,7 +11,7 @@ const ImagesByDepartment = () => {
     useEffect(() => {
         const fetchImages = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/images-by-department', {
+                const response = await axios.get('https://virtual-photobooth1.onrender.com/images-by-department', {
                     withCredentials: true,
                 });
                 setImages(response.data);

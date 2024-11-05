@@ -15,7 +15,7 @@ const __dirname = path.resolve();
 
 // Middleware
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Adjust to your frontend URL without trailing slash
+    origin: process.env.FRONTEND_URL || 'https://virtual-photobooth1.onrender.com', // Adjust to your frontend URL without trailing slash
     credentials: true // Allow credentials for session handling
 }));
 app.use(express.json()); // Parse JSON bodies

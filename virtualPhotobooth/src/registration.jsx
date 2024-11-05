@@ -36,7 +36,7 @@ const Registration = ({ setUserInfo }) => {
         setErrorMessage('');
 
         try {
-            const response = await axios.post('http://localhost:8000/api/register', {
+            const response = await axios.post('https://virtual-photobooth1.onrender.com/api/register', {
                 name,
                 email,
                 department,
