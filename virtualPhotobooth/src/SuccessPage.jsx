@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './SuccessPage.css';
 import logo from './assets/logo2.png'; // Replace with actual path to your logo
-import homeIcon from './assets/home.svg'; // Replace with actual path to home icon
+import homeIcon from './assets/home.png'; // Replace with actual path to home icon
 import photoIcon from './assets/image.svg'; // Replace with actual path to photo icon
-import saveIcon from './assets/save.svg'; // Replace with actual path to save icon
+
 
 const SuccessPage = () => {
     const navigate = useNavigate();
