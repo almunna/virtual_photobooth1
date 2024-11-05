@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import './SuccessPage.css';
 import logo from './assets/logo2.png'; // Replace with actual path to your logo
 import homeIcon from './assets/home.png'; // Replace with actual path to home icon
-import photoIcon from './assets/image.png'; // Replace with actual path to photo icon
+import photoIcon from './assets/Image.png'; // Replace with actual path to photo icon
 
 
 const SuccessPage = () => {
