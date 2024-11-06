@@ -93,7 +93,7 @@ const CaptureImage = ({ userInfo }) => {
     
         try {
             setLoading(true); // Start loading
-            const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/upload`, formData, {
+            const res = await axios.post('https://virtual-photobooth1.onrender.com/api/upload', formData, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'multipart/form-data',
