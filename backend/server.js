@@ -15,8 +15,15 @@ const __dirname = path.resolve();
 
 // Middleware
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'https://virtual-photobooth1.onrender.com', // Adjust to your frontend URL without trailing slash
-    credentials: true // Allow credentials for session handling
+    origin: process.env.FRONTEND_URL || 'https://virtual-photobooth1.onrender.com',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Only allow specific methods
+    allowedHeaders: ['Content-Type', 'Authorization'] // Specify necessary headers
+}));
+
+app.options('*', cors({
+    origin: process.env.FRONTEND_URL || 'https://virtual-photobooth1.onrender.com',
+    credentials: true
 }));
 app.use(express.json()); // Parse JSON bodies
 
