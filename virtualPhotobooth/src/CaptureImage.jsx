@@ -62,54 +62,54 @@ const CaptureImage = ({ userInfo }) => {
         setErrorMessage('');
     };
 
-    const handleUpload = async () => {
-        if (!overlayedImage) {
-            setErrorMessage('Please capture an image before uploading.');
-            return;
+   const handleUpload = async () => {
+    if (!overlayedImage) {
+        setErrorMessage('Please capture an image before uploading.');
+        return;
+    }
+
+    let blob;
+    try {
+        const response = await fetch(overlayedImage);
+        if (!response.ok) throw new Error('Failed to fetch image');
+        blob = await response.blob();
+    } catch (error) {
+        console.error('Image fetch error:', error);
+        setErrorMessage('Failed to capture image. Please try again.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', blob, 'captured_image.png'); // Ensure "image" matches server's expected field name
+
+    if (userInfo && userInfo.name && userInfo.email && userInfo.department) {
+        formData.append('name', userInfo.name);
+        formData.append('email', userInfo.email);
+        formData.append('department', userInfo.department);
+    } else {
+        setErrorMessage('User information is missing.');
+        return;
+    }
+
+    try {
+        setLoading(true); // Start loading indicator
+        const res = await axios.post('https://virtual-photobooth1.onrender.com/api/upload', formData, {
+            withCredentials: true, // Include cookies with the request
+        });
+
+        if (res.status === 200) {
+            navigate('/success'); // Redirect on successful upload
         }
-    
-        let blob;
-        try {
-            const response = await fetch(overlayedImage);
-            if (!response.ok) throw new Error('Failed to fetch image');
-            blob = await response.blob();
-        } catch (error) {
-            console.error('Image fetch error:', error);
-            setErrorMessage('Failed to capture image. Please try again.');
-            return;
-        }
-    
-        const formData = new FormData();
-        formData.append('image', blob, 'captured_image.png'); // Ensure "image" matches server's expected field name
-    
-        if (userInfo && userInfo.name && userInfo.email && userInfo.department) {
-            formData.append('name', userInfo.name);
-            formData.append('email', userInfo.email);
-            formData.append('department', userInfo.department);
-        } else {
-            setErrorMessage('User information is missing.');
-            return;
-        }
-    
-        try {
-            setLoading(true); // Start loading indicator
-            const res = await axios.post('https://virtual-photobooth1.onrender.com/api/upload', formData, {
-                withCredentials: true, // Include cookies with the request
-            });
-    
-            if (res.status === 200) {
-                navigate('/success'); // Redirect on successful upload
-            }
-        } catch (error) {
-            console.error('Image upload error:', error);
-            setErrorMessage(
-                error.response?.data?.error || 'Failed to upload image. Please try again.'
-            );
-        } finally {
-            setLoading(false); // Stop loading indicator
-        }
-    };
-    
+    } catch (error) {
+        console.error('Image upload error:', error);
+        setErrorMessage(
+            error.response?.data?.error || 'Failed to upload image. Please try again.'
+        );
+    } finally {
+        setLoading(false); // Stop loading indicator
+    }
+};
+
 
     const handleSave = () => {
         if (!overlayedImage) {
