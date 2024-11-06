@@ -80,7 +80,7 @@ const CaptureImage = ({ userInfo }) => {
         }
     
         const formData = new FormData();
-        formData.append('image', blob, 'captured_image.png');
+        formData.append('image', blob, 'captured_image.png'); // Ensure "image" matches server's expected field name
     
         if (userInfo && userInfo.name && userInfo.email && userInfo.department) {
             formData.append('name', userInfo.name);
@@ -92,16 +92,13 @@ const CaptureImage = ({ userInfo }) => {
         }
     
         try {
-            setLoading(true); // Start loading
+            setLoading(true); // Start loading indicator
             const res = await axios.post('https://virtual-photobooth1.onrender.com/api/upload', formData, {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+                withCredentials: true, // Include cookies with the request
             });
     
             if (res.status === 200) {
-                navigate('/success');
+                navigate('/success'); // Redirect on successful upload
             }
         } catch (error) {
             console.error('Image upload error:', error);
@@ -109,9 +106,10 @@ const CaptureImage = ({ userInfo }) => {
                 error.response?.data?.error || 'Failed to upload image. Please try again.'
             );
         } finally {
-            setLoading(false); // Stop loading
+            setLoading(false); // Stop loading indicator
         }
     };
+    
 
     const handleSave = () => {
         if (!overlayedImage) {
