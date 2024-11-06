@@ -73,12 +73,21 @@ const CaptureImage = ({ userInfo }) => {
             setErrorMessage('Please capture an image before uploading.');
             return;
         }
-
-        const response = await fetch(overlayedImage);
-        const blob = await response.blob();
+    
+        let blob;
+        try {
+            const response = await fetch(overlayedImage);
+            if (!response.ok) throw new Error('Failed to fetch image');
+            blob = await response.blob();
+        } catch (error) {
+            console.error('Image fetch error:', error);
+            setErrorMessage('Failed to capture image. Please try again.');
+            return;
+        }
+    
         const formData = new FormData();
         formData.append('image', blob, 'captured_image.png');
-
+    
         // Add user information to the form data
         if (userInfo && userInfo.name && userInfo.email && userInfo.department) {
             formData.append('name', userInfo.name);
@@ -88,25 +97,32 @@ const CaptureImage = ({ userInfo }) => {
             setErrorMessage('User information is missing.');
             return;
         }
-
+    
         try {
-            const res = await axios.post('https://virtual-photobooth1.onrender.com/api/upload', formData, {
+            // Show a loading indicator or disable upload button here
+            setLoading(true);
+            
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/upload`, formData, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
-            if (res.status === 200) {
     
-                    navigate('/success'); // Redirect to the success page
-               
+            if (res.status === 200) {
+                navigate('/success'); // Redirect to the success page
             }
         } catch (error) {
             console.error('Image upload error:', error);
-            setErrorMessage('Failed to upload image. Please try again.');
+            setErrorMessage(
+                error.response?.data?.error || 'Failed to upload image. Please try again.'
+            );
+        } finally {
+            // Hide loading indicator or re-enable upload button
+            setLoading(false);
         }
     };
+    
 
     // Save image function
     const handleSave = () => {
