@@ -68,17 +68,8 @@ const CaptureImage = ({ userInfo }) => {
             return;
         }
     
-        let blob;
-        try {
-            const response = await fetch(overlayedImage);
-            if (!response.ok) throw new Error('Failed to fetch image');
-            blob = await response.blob();
-        } catch (error) {
-            console.error('Image fetch error:', error);
-            setErrorMessage('Failed to capture image. Please try again.');
-            return;
-        }
-    
+        const response = await fetch(overlayedImage);
+        const blob = await response.blob();
         const formData = new FormData();
         formData.append('image', blob, 'captured_image.png');
     
