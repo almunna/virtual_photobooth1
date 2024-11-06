@@ -3,19 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Webcam from 'react-webcam';
 import './CaptureImage.css';
-import overlayImage from './assets/overlay.png'; // Ensure this path is correct
-import CaptureIcon from './assets/Capture.png'; // Import Capture icon
-import ReplaceIcon from './assets/Retake.png'; // Import Replace icon
-import SaveIcon from './assets/Save.svg'; // Import Save icon
-import SubmitIcon from './assets/Submit.png'; // Import Submit icon
-import BackButton from './assets/Back.png'; // Import Back button icon
-import logo2 from './assets/logo2.png'; // Import logo2
+import overlayImage from './assets/overlay.png';
+import CaptureIcon from './assets/Capture.png';
+import ReplaceIcon from './assets/Retake.png';
+import SaveIcon from './assets/Save.svg';
+import SubmitIcon from './assets/Submit.png';
+import BackButton from './assets/Back.png';
+import logo2 from './assets/logo2.png';
 
 const CaptureImage = ({ userInfo }) => {
     const [image, setImage] = useState(null);
     const [overlayedImage, setOverlayedImage] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [loading, setLoading] = useState(false); // Loading state for the upload button
     const webcamRef = useRef(null);
     const navigate = useNavigate();
 
@@ -24,13 +25,13 @@ const CaptureImage = ({ userInfo }) => {
         const imageSrc = webcamRef.current.getScreenshot();
         if (imageSrc) {
             setImage(imageSrc);
-            applyOverlay(imageSrc); // Apply overlay directly after capturing
+            applyOverlay(imageSrc);
         } else {
             setErrorMessage('Failed to capture image. Please try again.');
         }
     };
 
-    // Apply overlay to the captured image without changing its ratio
+    // Apply overlay to the captured image
     const applyOverlay = (imageSrc) => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -43,23 +44,17 @@ const CaptureImage = ({ userInfo }) => {
 
         img.onload = () => {
             overlay.onload = () => {
-                // Set canvas dimensions to match the image dimensions
                 canvas.width = img.width;
                 canvas.height = img.height;
 
-                // Draw the captured image
                 ctx.drawImage(img, 0, 0, img.width, img.height);
+                ctx.drawImage(overlay, 0, 0, img.width, img.height);
 
-                // Draw the overlay on top of the captured image
-                ctx.drawImage(overlay, 0, 0, img.width, img.height); // Overlay on top of the captured image
-
-                // Set the overlayed image as a data URL
                 setOverlayedImage(canvas.toDataURL());
             };
         };
     };
 
-    // Retake image
     const handleRetake = () => {
         setImage(null);
         setOverlayedImage(null);
@@ -67,7 +62,6 @@ const CaptureImage = ({ userInfo }) => {
         setErrorMessage('');
     };
 
-    // Handle image upload
     const handleUpload = async () => {
         if (!overlayedImage) {
             setErrorMessage('Please capture an image before uploading.');
@@ -88,7 +82,6 @@ const CaptureImage = ({ userInfo }) => {
         const formData = new FormData();
         formData.append('image', blob, 'captured_image.png');
     
-        // Add user information to the form data
         if (userInfo && userInfo.name && userInfo.email && userInfo.department) {
             formData.append('name', userInfo.name);
             formData.append('email', userInfo.email);
@@ -99,9 +92,7 @@ const CaptureImage = ({ userInfo }) => {
         }
     
         try {
-            // Show a loading indicator or disable upload button here
-            setLoading(true);
-            
+            setLoading(true); // Start loading
             const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/upload`, formData, {
                 withCredentials: true,
                 headers: {
@@ -110,7 +101,7 @@ const CaptureImage = ({ userInfo }) => {
             });
     
             if (res.status === 200) {
-                navigate('/success'); // Redirect to the success page
+                navigate('/success');
             }
         } catch (error) {
             console.error('Image upload error:', error);
@@ -118,13 +109,10 @@ const CaptureImage = ({ userInfo }) => {
                 error.response?.data?.error || 'Failed to upload image. Please try again.'
             );
         } finally {
-            // Hide loading indicator or re-enable upload button
-            setLoading(false);
+            setLoading(false); // Stop loading
         }
     };
-    
 
-    // Save image function
     const handleSave = () => {
         if (!overlayedImage) {
             setErrorMessage('Please capture an image before saving.');
@@ -132,16 +120,15 @@ const CaptureImage = ({ userInfo }) => {
         }
         
         const link = document.createElement('a');
-        link.href = overlayedImage; // Use the overlayed image's data URL
-        link.download = 'captured_image_with_overlay.png'; // Set the file name
+        link.href = overlayedImage;
+        link.download = 'captured_image_with_overlay.png';
         document.body.appendChild(link);
-        link.click(); // Trigger the download
+        link.click();
         document.body.removeChild(link);
     };
 
-    // Back navigation
     const handleBack = () => {
-        navigate(-1); // Go back to the previous page
+        navigate(-1);
     };
 
     return (
@@ -155,7 +142,7 @@ const CaptureImage = ({ userInfo }) => {
                         ref={webcamRef}
                         audio={false}
                         screenshotFormat="image/png"
-                        mirrored={false}  // Disable mirroring
+                        mirrored={false}
                         className="webcam"
                     />
                 ) : (
@@ -179,13 +166,13 @@ const CaptureImage = ({ userInfo }) => {
                 ) : (
                     <>
                         <button onClick={handleRetake}>
-                            <img src={ReplaceIcon} alt="Replace" className='btnAction' /> {/* Replace icon */}
+                            <img src={ReplaceIcon} alt="Replace" className='btnAction' />
                         </button>
-                        <button onClick={handleUpload}>
-                            <img src={SubmitIcon} alt="Submit" className='btnAction' /> {/* Submit icon */}
+                        <button onClick={handleUpload} disabled={loading}>
+                            {loading ? "Uploading..." : <img src={SubmitIcon} alt="Submit" className='btnAction' />}
                         </button>
                         <button onClick={handleSave}>
-                            <img src={SaveIcon} alt="Save" className='btnAction' /> {/* Save icon */}
+                            <img src={SaveIcon} alt="Save" className='btnAction' />
                         </button>
                     </>
                 )}
