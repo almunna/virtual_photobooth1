@@ -67,12 +67,13 @@ const CaptureImage = ({ userInfo }) => {
             setErrorMessage('Please capture an image before uploading.');
             return;
         }
-    
+
         const response = await fetch(overlayedImage);
         const blob = await response.blob();
         const formData = new FormData();
         formData.append('image', blob, 'captured_image.png');
-    
+
+        // Add user information to the form data
         if (userInfo && userInfo.name && userInfo.email && userInfo.department) {
             formData.append('name', userInfo.name);
             formData.append('email', userInfo.email);
@@ -81,26 +82,24 @@ const CaptureImage = ({ userInfo }) => {
             setErrorMessage('User information is missing.');
             return;
         }
-    
+
         try {
-            setLoading(true); // Start loading
-            const res = await axios.post('https://virtual-photobooth1.onrender.com/api/upload', formData, {
+            const res = await axios.post('https://mainproject-glmp.onrender.com/api/upload', formData, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-    
+
             if (res.status === 200) {
-                navigate('/success');
+                setSuccessMessage('Image uploaded successfully! An email with your photo has been sent to you.');
+                setTimeout(() => {
+                    navigate('/register'); // Redirect to registration or another page
+                }, 2000);
             }
         } catch (error) {
             console.error('Image upload error:', error);
-            setErrorMessage(
-                error.response?.data?.error || 'Failed to upload image. Please try again.'
-            );
-        } finally {
-            setLoading(false); // Stop loading
+            setErrorMessage('Failed to upload image. Please try again.');
         }
     };
 

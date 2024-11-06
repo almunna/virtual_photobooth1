@@ -186,15 +186,14 @@ router.post('/upload', ensureRegistrationData, upload.single('image'), async (re
             imagePath: imagePath, // Save uploaded image path
         });
 
-        await newEmployee.save();
+        const savedEmployee = await newEmployee.save();
 
         // Send email after image upload
         const emailSubject = 'Your Captured Image';
         const emailText = `Hi ${req.session.name},\n\nThank you for using the Virtual Photobooth! Attached is your photo.\n\nBest regards,\nVirtual Photobooth`;
         await sendEmail(req.session.email, emailSubject, emailText, imagePath); // Send email with user email
 
-        // Send back the image path to the client
-        res.status(200).json({ message: 'Image uploaded successfully', imagePath });
+        res.status(200).json({ message: 'Image uploaded and data saved successfully!', data: savedEmployee });
     } catch (error) {
         console.error('Error processing upload:', error.message);
         res.status(500).json({ error: `An error occurred while processing the image: ${error.message}` });
