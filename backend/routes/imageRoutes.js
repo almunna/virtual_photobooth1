@@ -79,33 +79,34 @@ router.get('/download-all', async (req, res) => {
     }
 });
 
-
-// Set up multer storage for image uploads with department-based folder structure
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const department = req.session.department;
-        console.log("Session Department:", department); // Log department from session
+        console.log("Session Department:", department);
 
         if (!department) {
             return cb(new Error('Department is missing from session'));
         }
 
-        const dir = path.join('uploads', department);
+        // Ensure the department name is safe for file paths
+        const sanitizedDepartment = department.replace(/[^a-zA-Z0-9_-]/g, ""); // Remove unwanted characters
+        const dir = path.join('uploads', sanitizedDepartment);
 
-        // Attempt to create the directory if it doesn't exist
-        try {
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir, { recursive: true });
-                console.log(`Directory created: ${dir}`); // Log directory creation
-            }
-            cb(null, dir);
-        } catch (error) {
-            console.error('Error creating directory:', error);
-            cb(error);
-        }
+        // Use a promise to create the directory and call the callback afterward
+        fs.mkdir(dir, { recursive: true })
+            .then(() => {
+                console.log(`Directory ensured: ${dir}`);
+                cb(null, dir); // Pass the directory path to Multer
+            })
+            .catch((error) => {
+                console.error('Error creating directory:', error);
+                cb(error); // Pass the error to Multer
+            });
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname)); // Use original filename or create a unique one
+        // Create a unique filename using uuid
+        const uniqueFilename = `${uuidv4()}-${Date.now()}${path.extname(file.originalname)}`;
+        cb(null, uniqueFilename);
     },
 });
 
@@ -199,5 +200,7 @@ router.post('/upload', ensureRegistrationData, upload.single('image'), async (re
         res.status(500).json({ error: `An error occurred while processing the image: ${error.message}` });
     }
 });
+
+
 
 export default router;
